@@ -197,18 +197,7 @@
           fd.append("audio_data", blob, 'test');
           xhr.open("POST", "/api/voice", true);
           xhr.send(fd);
-
-
-
-
-          var a = document.createElement('a');
-          a.download = 'download.mp3';
-          a.href = window.URL.createObjectURL(blob);
-          a.click();
-          console.log(myFile);
-          console.log(blob);
           chunks = [];
-          const audioURL = window.URL.createObjectURL(blob);
           console.log("recorder stopped");
         }
 
