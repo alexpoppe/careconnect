@@ -10,7 +10,7 @@ ENV APP_HOME /api
 ENV PORT 8080
 WORKDIR $APP_HOME
 
-RUN apt-get install -y ffmpeg
+RUN apt-get -y update && apt-get -y upgrade && apt-get install -y ffmpeg
 
 COPY requirements.txt ./requirements.txt
 # Install production dependencies.
