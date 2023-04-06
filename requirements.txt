@@ -1,0 +1,8 @@
+Flask==2.2.3
+numpy==1.23.5
+openai==0.27.2
+python-dotenv==1.0.0
+qdrant_client==1.1.1
+torch==2.0.0
+git+https://github.com/openai/whisper.git
+gunicorn
