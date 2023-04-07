@@ -4,6 +4,7 @@ from qdrant_client import QdrantClient
 import openai
 import torch
 import whisper
+import time
 
 
 api = Blueprint("api", __name__, template_folder='templates', static_folder='static', static_url_path='api/static')
@@ -38,6 +39,7 @@ def response():
         print("messages: ", message, flush=True)
     answer = get_response(query, messages)
     return answer
+
 
 @api.route("/voice", methods=["POST"])
 def voice():

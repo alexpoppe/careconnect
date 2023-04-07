@@ -41,15 +41,18 @@
     <form class="msger-inputarea">
       <input type="text" class="msger-input" id="textInput" placeholder="Enter your message...">
       <button type="submit" class="msger-send-btn">Send</button>
-      <button type="submit" class="record"><i class="fa-solid fa-microphone fa-xl"></i></button>
-      <button type="submit" class="stop"><i class="fa-solid fa-microphone fa-xl"></i></button>
+      <div class="record"><i class="fa-solid fa-microphone fa-xl"></i></div>
+      <div hidden="hidden" class="loading"><i class="fa-solid fa-spinner fa-spin fa-xl"></i></div>
+      <div hidden="hidden" class="loading-send"><i class="fa-solid fa-spinner fa-spin fa-xl"></i></div>
+
     </form>
   </section>
   <!-- partial -->
   <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
   <script src="https://kit.fontawesome.com/384afa54f9.js" crossorigin="anonymous"></script>
   <script>
-
+    
+    const loading_send = document.querySelector('.loading-send')
     const msgerForm = get(".msger-inputarea");
     const msgerInput = get(".msger-input");
     const msgerChat = get(".msger-chat");
@@ -66,6 +69,8 @@
     const PERSON_NAME = "You";
 
     msgerForm.addEventListener("submit", event => {
+      console.log("show")
+      loading_send.removeAttribute("hidden")
       event.preventDefault();
 
       const msgText = msgerInput.value;
@@ -80,6 +85,7 @@
 
     function appendMessage(name, img, side, text) {
       //   Simple solution for small apps
+      
 
       const msgHTML = `
 <div class="msg ${side}-msg">
@@ -110,7 +116,9 @@
         appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
         localStorage.answers = localStorage.answers + data + " | "
         console.log(localStorage.answers)
+        loading_send.setAttribute("hidden", "hidden")
       });
+      
 
     }
 
@@ -139,43 +147,36 @@
   <script>
 
     const record = document.querySelector('.record');
-    const stop = document.querySelector('.stop');
-
-    stop.disabled = true;
-
+    const loading = document.querySelector('.loading')
+    
+    
     if (navigator.mediaDevices.getUserMedia) {
       console.log('getUserMedia supported.');
     
       const constraints = { audio: true };
       let chunks = [];
-
-      console.log(constraints);
-      console.log(chunks);
     
       let onSuccess = function(stream) {
         const mediaRecorder = new MediaRecorder(stream);
     
     
         record.onclick = function() {
-          mediaRecorder.start();
-          console.log(mediaRecorder.state);
-          console.log("recorder started");
-          record.style.background = "red";
-    
-          stop.disabled = false;
-          record.disabled = true;
-        }
-    
-        stop.onclick = function() {
-          mediaRecorder.stop();
-          console.log(mediaRecorder.state);
-          console.log("recorder stopped");
-          record.style.background = "";
-          record.style.color = "";
-          // mediaRecorder.requestData();
-    
-          stop.disabled = true;
-          record.disabled = false;
+          if (mediaRecorder.state == 'recording') {
+            mediaRecorder.stop();
+            console.log(mediaRecorder.state);
+            console.log("recorder stopped");
+            record.style.background = "";
+            record.style.color = "";
+            record.disabled = true;
+            loading.removeAttribute("hidden");
+
+          } else {
+            mediaRecorder.start();
+            console.log(mediaRecorder.state);
+            console.log("recorder started");
+            record.style.background = "red";
+          }
+          
         }
 
         mediaRecorder.onstop = function(e) {
@@ -191,6 +192,8 @@
             if(this.readyState === 4) {
                 console.log("Server returned: ", e.target.responseText);
                 document.getElementById('textInput').value = e.target.responseText;
+                record.disabled = false;
+                loading.setAttribute("hidden", "hidden")
             }
         };
           var fd = new FormData();
