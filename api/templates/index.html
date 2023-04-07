@@ -22,7 +22,7 @@
 
     <main class="msger-chat">
       <div class="msg left-msg">
-        <div class="msg-img"></div>
+        <div class="msg-img"><i class="fa-solid fa-user-robot"></i></div>
 
         <div class="msg-bubble">
           <div class="msg-info">
@@ -69,7 +69,6 @@
     const PERSON_NAME = "You";
 
     msgerForm.addEventListener("submit", event => {
-      console.log("show")
       loading_send.removeAttribute("hidden")
       event.preventDefault();
 
@@ -77,7 +76,6 @@
       if (!msgText) return;
 
       localStorage.questions = localStorage.questions + msgText + " | "
-      console.log(localStorage.questions)
       appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
       msgerInput.value = "";
       botResponse(msgText);
@@ -110,12 +108,9 @@
 
       // Bot Response
       $.get("/api/response", { msg: rawText , questions: localStorage.questions, answers: localStorage.answers}).done(function (data) {
-        console.log(rawText);
-        console.log(data);
         const msgText = data;
         appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
         localStorage.answers = localStorage.answers + data + " | "
-        console.log(localStorage.answers)
         loading_send.setAttribute("hidden", "hidden")
       });
       
@@ -135,13 +130,6 @@
       return `${h.slice(-2)}:${m.slice(-2)}`;
     }
 
-    function buttonColor() {
-      console.log(index)
-      console.log(voice_colors)
-      console.log(document.getElementById("voice-btn").style.color)
-      document.getElementById("voice-btn").style.color = voice_colors[index]
-      index = index >= voice_colors.length - 1 ? 0 : index + 1;
-    }
 
   </script>
   <script>
@@ -151,7 +139,6 @@
     
     
     if (navigator.mediaDevices.getUserMedia) {
-      console.log('getUserMedia supported.');
     
       const constraints = { audio: true };
       let chunks = [];
@@ -163,8 +150,6 @@
         record.onclick = function() {
           if (mediaRecorder.state == 'recording') {
             mediaRecorder.stop();
-            console.log(mediaRecorder.state);
-            console.log("recorder stopped");
             record.style.background = "";
             record.style.color = "";
             record.disabled = true;
@@ -172,15 +157,12 @@
 
           } else {
             mediaRecorder.start();
-            console.log(mediaRecorder.state);
-            console.log("recorder started");
             record.style.background = "red";
           }
           
         }
 
         mediaRecorder.onstop = function(e) {
-          console.log("data available after MediaRecorder.stop() called");
 
           const blob = new Blob(chunks, {'type': 'audio/mp3'});
           const myFile = new File([blob], 'audio.mp3', {
@@ -190,7 +172,6 @@
           var xhr = new XMLHttpRequest();
           xhr.onload=function(e) {
             if(this.readyState === 4) {
-                console.log("Server returned: ", e.target.responseText);
                 document.getElementById('textInput').value = e.target.responseText;
                 record.disabled = false;
                 loading.setAttribute("hidden", "hidden")
@@ -201,7 +182,6 @@
           xhr.open("POST", "/api/voice", true);
           xhr.send(fd);
           chunks = [];
-          console.log("recorder stopped");
         }
 
         mediaRecorder.ondataavailable = function(e) {

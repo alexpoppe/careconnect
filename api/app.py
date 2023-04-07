@@ -15,7 +15,6 @@ def home():
 
 @api.route("/response")
 def response():
-    print(request.args, flush=True)
     query = request.args.get('msg')
     questions = request.args.get('questions')
     answers = request.args.get('answers')
@@ -34,9 +33,8 @@ def response():
             "role": "assistant", "content": answer
         })
     
-    
     for message in messages:
-        print("messages: ", message, flush=True)
+        print(message, flush=True)
     answer = get_response(query, messages)
     return answer
 
@@ -45,14 +43,12 @@ def response():
 def voice():
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-    print(request.files, flush=True)
     f = request.files['audio_data']
     with open('audio.wav', 'wb') as audio:
         f.save(audio)
     
     model = whisper.load_model("base", device=DEVICE)
     result = model.transcribe("audio.wav")
-    print('result -->', result["text"], flush=True)
     
     return result["text"]
 
@@ -89,23 +85,18 @@ def get_response(query: str, messages: list) -> str:
         prompt += result.payload["text"] + "\n---\n"
     prompt += "Question:" + query + "\n---\n" + "Answer:"
     
-    # add new prompt to previous messages
-    # messages.append(
-    #     {"role": "user", "content": prompt}
-    # )
-    
     messages.append({
         "role": "user", "content": prompt
     })
-    print("----------")
-    for message in messages:
-        print(message, flush=True)
+    print('sending answer to GPT ...', flush=True)
+    
     # create answer
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages
     )
     
+    print('answer received!', flush=True)
     # get content
     answer = completion.choices[0].message.content
     
