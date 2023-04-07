@@ -131,7 +131,7 @@
         appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
         localStorage.answers = localStorage.answers + data + " | "
         loading_send.setAttribute("hidden", "hidden")
-        console.log("answer received")
+        console.log("answer from GPT received")
       });
       
 
@@ -159,7 +159,7 @@
     
     
     if (navigator.mediaDevices.getUserMedia) {
-    
+      console.log('getUserMedia supported');
       const constraints = { audio: true };
       let chunks = [];
     
@@ -170,12 +170,13 @@
         record.onclick = function() {
           if (mediaRecorder.state == 'recording') {
             mediaRecorder.stop();
+            console.log('stopped recording')
             record.style.background = "";
             record.style.color = "";
             record.disabled = true;
             loading.removeAttribute("hidden");
-
           } else {
+            console.log('recording ...')
             mediaRecorder.start();
             record.style.color = "red";
           }
@@ -194,11 +195,13 @@
             if(this.readyState === 4) {
                 document.getElementById('textInput').value = e.target.responseText;
                 record.disabled = false;
+                console.log('received trascript recording')
                 loading.setAttribute("hidden", "hidden")
             }
         };
           var fd = new FormData();
           fd.append("audio_data", blob, 'test');
+          console.log('sending recording to Whisper ...')
           xhr.open("POST", "/api/voice", true);
           xhr.send(fd);
           chunks = [];

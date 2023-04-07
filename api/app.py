@@ -13,7 +13,6 @@ api = Blueprint("api", __name__, template_folder='templates', static_folder='sta
 def home():
     now = datetime.now()
     timestamp = str(now.hour) + ':' +  str(now.minute)
-    print(timestamp, flush=True)
     return render_template("index.html", timestamp=timestamp)
 
 @api.route("/response")
