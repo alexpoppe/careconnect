@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Chatbot</title>
+  <title>CareConnect</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -12,26 +12,29 @@
 </head>
 
 <body>
+
   <!-- partial:index.partial.html -->
   <section class="msger">
     <header class="msger-header">
       <div class="msger-header-title">
-        <i class="fas fa-bug"></i> Chatbot <i class="fas fa-bug"></i>
+        <i class="fas fa-bug"></i> CareBot <i class="fas fa-bug"></i>
       </div>
     </header>
 
     <main class="msger-chat">
       <div class="msg left-msg">
-        <div class="msg-img"><i class="fa-solid fa-user-robot"></i></div>
+        <div class="msg-img"> <img src="{{url_for('api.static', filename='bot.png')}}" width="50px" heigth="50px"></div>
 
         <div class="msg-bubble">
           <div class="msg-info">
-            <div class="msg-info-name">Chatbot</div>
-            <div class="msg-info-time">12:45</div>
+            <div class="msg-info-name">CareBot</div>
+            <div class="msg-info-time">{{timestamp}}</div>
           </div>
 
           <div class="msg-text">
-            Hi, welcome to ChatBot! Go ahead and send me a message. 😄
+            Hi and welcome, I am CareBot! <br>
+            <br>
+            Go ahead and send me a message. I will answer your questions about diabetes 😄
           </div>
         </div>
       </div>
@@ -65,7 +68,7 @@
     // Icons made by Freepik from www.flaticon.com
     const BOT_IMG = "../static/bot.png";
     const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
-    const BOT_NAME = "    ChatBot";
+    const BOT_NAME = "    CareBot";
     const PERSON_NAME = "You";
 
     msgerForm.addEventListener("submit", event => {
@@ -83,11 +86,11 @@
 
     function appendMessage(name, img, side, text) {
       //   Simple solution for small apps
-      
-
-      const msgHTML = `
+      var msgHTML = ''
+      if (side == 'left') {
+        msgHTML = `
 <div class="msg ${side}-msg">
-  <div class="msg-img""></div>
+  <div class="msg-img""><img src="{{url_for('api.static', filename='bot.png')}}" width="50px" heigth="50px"></div>
 
   <div class="msg-bubble">
     <div class="msg-info">
@@ -99,19 +102,36 @@
   </div>
 </div>
 `;
+      } else {
+        msgHTML = `
+<div class="msg ${side}-msg">
+  <div class="msg-img""><img src="{{url_for('api.static', filename='you.png')}}" width="50px" heigth="50px"></div>
+
+  <div class="msg-bubble">
+    <div class="msg-info">
+      <div class="msg-info-name">${name}</div>
+      <div class="msg-info-time">${formatDate(new Date())}</div>
+    </div>
+
+    <div class="msg-text">${text}</div>
+  </div>
+</div>
+`;
+      }
 
       msgerChat.insertAdjacentHTML("beforeend", msgHTML);
       msgerChat.scrollTop += 500;
     }
 
     function botResponse(rawText) {
-
+      console.log("sending message to GPT ...")
       // Bot Response
       $.get("/api/response", { msg: rawText , questions: localStorage.questions, answers: localStorage.answers}).done(function (data) {
         const msgText = data;
         appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
         localStorage.answers = localStorage.answers + data + " | "
         loading_send.setAttribute("hidden", "hidden")
+        console.log("answer received")
       });
       
 
@@ -135,7 +155,7 @@
   <script>
 
     const record = document.querySelector('.record');
-    const loading = document.querySelector('.loading')
+    const loading = document.querySelector('.loading');
     
     
     if (navigator.mediaDevices.getUserMedia) {
@@ -157,7 +177,7 @@
 
           } else {
             mediaRecorder.start();
-            record.style.background = "red";
+            record.style.color = "red";
           }
           
         }

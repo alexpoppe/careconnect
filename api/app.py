@@ -4,14 +4,17 @@ from qdrant_client import QdrantClient
 import openai
 import torch
 import whisper
-import time
+from datetime import datetime
 
 
 api = Blueprint("api", __name__, template_folder='templates', static_folder='static', static_url_path='api/static')
 
 @api.route("/", methods=["GET"])
 def home():
-    return render_template("index.html")
+    now = datetime.now()
+    timestamp = str(now.hour) + ':' +  str(now.minute)
+    print(timestamp, flush=True)
+    return render_template("index.html", timestamp=timestamp)
 
 @api.route("/response")
 def response():
@@ -49,7 +52,6 @@ def voice():
     
     model = whisper.load_model("base", device=DEVICE)
     result = model.transcribe("audio.wav")
-    
     return result["text"]
 
 
