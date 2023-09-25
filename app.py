@@ -1,11 +1,9 @@
 from flask import Flask, request
 from config import Config
 
-
-
 def create_app(config_class=Config):
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config_class) 
 
     with app.app_context():
         from api.app import api
@@ -18,4 +16,4 @@ def create_app(config_class=Config):
     
     return app
 
-app = create_app()
+app = create_app() 
